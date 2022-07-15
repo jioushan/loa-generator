@@ -1,6 +1,6 @@
 # LoA Generator
 
-Quickly generate LOAs (PDF or plaintext) in your browser.
+Quickly generate LoAs (letters of authorization) in your browser as plaintext or a PDF.
 
 Use it at <a href="https://loa.tools">https://loa.tools</a>.
 
