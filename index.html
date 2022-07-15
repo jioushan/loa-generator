@@ -1,17 +1,11 @@
-<!doctype>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>LoA Generator</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <script crossorigin="anonymous"
-            integrity="sha512-VKjwFVu/mmKGk0Z0BxgDzmn10e590qk3ou/jkmRugAkSTMSIRkd4nEnk+n7r5WBbJquusQEQjBidrBD3IQQISQ=="
-            referrerpolicy="no-referrer"
-            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
-            referrerpolicy="no-referrer"
-            src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.0/dist/jspdf.umd.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
@@ -33,38 +27,38 @@
     </svg>
 </a>
 
-<form action="#" id="form">
+<div id="form">
     <label>
-        ASN
+        ASN*
         <input id="form-asn" onblur="load_peeringdb_data()" placeholder="65530" required type="number">
     </label>
 
     <label>
-        Network Name
+        Network Name*
         <input id="form-network-name" required type="text">
     </label>
 
     <br>
 
     <label>
-        Peer ASN
+        Peer ASN*
         <input id="form-peer-asn" onblur="load_peeringdb_data()" placeholder="65531" required type="number">
     </label>
 
     <label>
-        Peer Name
+        Peer Name*
         <input id="form-peer-name" required type="text">
     </label>
 
     <br>
 
     <label>
-        Contact Name
+        Contact Name*
         <input id="form-contact-name" placeholder="John Doe" required type="text">
     </label>
 
     <label>
-        Contact Email
+        Contact Email*
         <input id="form-email" placeholder="noc@example.com" required type="email">
     </label>
 
@@ -76,16 +70,20 @@
     </label>
 
     <label>
-        Date
+        Date*
         <input id="form-date" required type="date">
     </label>
 
     <br>
 
     <label>
-        Prefixes
-        <textarea id="form-prefixes" placeholder="192.0.2.0/24\n203.0.113.0/24 origin 65590\n2001:db8::/32 le 48"
-                  required></textarea>
+        Prefixes*
+        <textarea id="form-prefixes" placeholder="192.0.2.0/24\n203.0.113.0/24 origin 65590\n2001:db8::/32 le 48" required></textarea>
+    </label>
+
+    <label>
+        Notes
+        <textarea id="form-notes"></textarea>
     </label>
 
     <br>
@@ -95,21 +93,56 @@
         <input alt="Network Logo" id="form-logo" type="file"/>
     </label>
 
-    <br>
+    <img alt="" id="logo-preview" style="display: none"/>
 
-    <img alt="" id="logo-preview"/>
+    <div class="flex-row">
+        <div>
+            <h4>Generate PDF</h4>
 
-    <details>
-        <summary>Notes</summary>
-        <textarea id="form-notes"></textarea>
-    </details>
+            <!-- Save PDF -->
+            <button onclick="save_pdf_loa()">
+                <svg class="i-import" fill="none" height="16" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 32 32" width="16">
+                    <path d="M28 22 L28 30 4 30 4 22 M16 4 L16 24 M8 16 L16 24 24 16"></path>
+                </svg>
+            </button>
 
-    <br>
+            <!-- Open PDF -->
+            <button onclick="open_pdf_loa()">
+                <svg class="i-external" fill="none" height="16" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 32 32" width="16">
+                    <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18"></path>
+                </svg>
+            </button>
+        </div>
 
-    <button onclick="save_pdf_loa()" type="submit">Download PDF</button>
-    <button onclick="save_text_loa()" type="submit">Download text</button>
-</form>
+        <div>
+            <h4>Reset LoA</h4>
 
+            <button onclick="reset_loa()">
+                <svg class="i-trash" fill="none" height="16" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 32 32" width="16">
+                    <path d="M28 6 L6 6 8 30 24 30 26 6 4 6 M16 12 L16 24 M21 12 L20 24 M11 12 L12 24 M12 6 L13 2 19 2 20 6"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div>
+            <h4>Generate plaintext</h4>
+
+            <!-- Save text -->
+            <button onclick="gen_text_loa(true)">
+                <svg class="i-import" fill="none" height="16" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 32 32" width="16">
+                    <path d="M28 22 L28 30 4 30 4 22 M16 4 L16 24 M8 16 L16 24 24 16"></path>
+                </svg>
+            </button>
+
+            <!-- Open text -->
+            <button onclick="gen_text_loa(false)">
+                <svg class="i-external" fill="none" height="16" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 32 32" width="16">
+                    <path d="M14 9 L3 9 3 29 23 29 23 18 M18 4 L28 4 28 14 M28 4 L14 18"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
 </body>
 
 <script src="script.js"></script>
