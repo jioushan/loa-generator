@@ -40,7 +40,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: https://loa.tools
+      url: https://loa.jsmsr.com
 
     steps:
       - name: Deploy
